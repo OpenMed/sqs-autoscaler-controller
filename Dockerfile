@@ -1,5 +1,10 @@
+FROM golang:1.15-alpine as build
+COPY ./ /go/src
+WORKDIR /go/src
+RUN go build -mod vendor -o sqs-autoscaler-controller
+
 FROM scratch
 
-ADD bin/sqs-autoscaler-controller /sqs-autoscaler-controller
+COPY --from=build /go/src/sqs-autoscaler-controller /sqs-autoscaler-controller
 
 ENTRYPOINT ["/sqs-autoscaler-controller"]
