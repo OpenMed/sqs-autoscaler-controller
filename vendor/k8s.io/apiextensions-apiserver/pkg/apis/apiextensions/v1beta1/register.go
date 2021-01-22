@@ -43,12 +43,20 @@ var (
 	AddToScheme        = localSchemeBuilder.AddToScheme
 )
 
-// Adds the list of known types to api.Scheme.
+// Adds the list of known types to the given scheme.
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&CustomResourceDefinition{},
 		&CustomResourceDefinitionList{},
+		&ConversionReview{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
+}
+
+func init() {
+	// We only register manually written functions here. The registration of the
+	// generated functions takes place in the generated files. The separation
+	// makes the code compile even when the generated files are missing.
+	localSchemeBuilder.Register(addDefaultingFuncs)
 }
